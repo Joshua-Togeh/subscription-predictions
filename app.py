@@ -53,25 +53,21 @@ def train_model(X, y, model_name):
     # Split data
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    # Handle class imbalance
-    try:
-        sm = SMOTE(random_state=42)
-        X_train, y_train = sm.fit_resample(X_train, y_train)
-    except Exception as e:
-        st.warning(f"SMOTE not available: {e}. Using class weights instead.")
-        class_weight = 'balanced'
-    else:
-        class_weight = None
-    
     # Initialize model
     if model_name == 'Logistic Regression':
-        model = LogisticRegression(random_state=42, class_weight=class_weight)
+        model = LogisticRegression(random_state=42, class_weight='balanced')
     elif model_name == 'Decision Tree':
-        model = DecisionTreeClassifier(random_state=42, class_weight=class_weight)
+        model = DecisionTreeClassifier(random_state=42, class_weight='balanced')
     elif model_name == 'Random Forest':
-        model = RandomForestClassifier(random_state=42, class_weight=class_weight)
+        model = RandomForestClassifier(random_state=42, class_weight='balanced')
     elif model_name == 'Gradient Boosting':
+        # Gradient Boosting doesn't support class_weight, so we use sample_weight
         model = GradientBoostingClassifier(random_state=42)
+        sample_weight = np.where(y_train == 1, 
+                               len(y_train[y_train == 0]) / len(y_train[y_train == 1]), 
+                               1)
+        model.fit(X_train, y_train, sample_weight=sample_weight)
+        return model, X_test, y_test
     
     # Train model
     model.fit(X_train, y_train)
