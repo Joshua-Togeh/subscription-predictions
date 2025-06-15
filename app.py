@@ -1,14 +1,12 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.metrics import classification_report, roc_auc_score, confusion_matrix, accuracy_score, f1_score, precision_score, recall_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from imblearn.over_sampling import SMOTE
 from sklearn.utils import check_X_y
 
@@ -150,18 +148,22 @@ def main():
         prediction_proba = model.predict_proba(user_processed)
         
         # Display results
-        st.subheader("Prediction")
+        st.subheader("Prediction Results")
         if prediction[0] == 1:
-            st.success("This client is likely to subscribe to a term deposit")
+            st.success("✅ This client is LIKELY to subscribe to a term deposit")
         else:
-            st.error("This client is unlikely to subscribe to a term deposit")
+            st.error("❌ This client is UNLIKELY to subscribe to a term deposit")
         
-        st.subheader("Prediction Probability")
-        st.write(f"Probability of subscribing: {prediction_proba[0][1]:.2%}")
-        st.write(f"Probability of not subscribing: {prediction_proba[0][0]:.2%}")
+        st.write("")  # Spacer
+        st.subheader("Prediction Confidence")
+        col1, col2 = st.columns(2)
+        with col1:
+            st.metric("Probability of subscribing", f"{prediction_proba[0][1]:.2%}")
+        with col2:
+            st.metric("Probability of not subscribing", f"{prediction_proba[0][0]:.2%}")
     
-    # Model evaluation
-    st.subheader('Model Performance')
+    # Model evaluation metrics
+    st.subheader('Model Performance Metrics')
     y_pred = model.predict(X_test)
     
     col1, col2, col3, col4 = st.columns(4)
@@ -173,39 +175,6 @@ def main():
         st.metric("Recall", f"{recall_score(y_test, y_pred):.2f}")
     with col4:
         st.metric("F1 Score", f"{f1_score(y_test, y_pred):.2f}")
-    
-    # Confusion matrix
-    st.subheader('Confusion Matrix')
-    fig, ax = plt.subplots()
-    sns.heatmap(confusion_matrix(y_test, y_pred), annot=True, fmt='d', cmap='Blues', ax=ax)
-    ax.set_xlabel('Predicted')
-    ax.set_ylabel('Actual')
-    st.pyplot(fig)
-    
-    # Feature importance/coefficients
-    if model_name == 'Logistic Regression':
-        st.subheader('Logistic Regression Coefficients')
-        coefficients = pd.DataFrame({
-            'Feature': X.columns,
-            'Coefficient': model.coef_[0]
-        }).sort_values('Coefficient', key=abs, ascending=False).head(10)
-        
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.barplot(x='Coefficient', y='Feature', data=coefficients, ax=ax)
-        ax.set_title('Top 10 Most Important Features')
-        st.pyplot(fig)
-        
-    elif model_name in ['Decision Tree', 'Random Forest', 'Gradient Boosting']:
-        st.subheader('Feature Importance')
-        importances = pd.DataFrame({
-            'Feature': X.columns,
-            'Importance': model.feature_importances_
-        }).sort_values('Importance', ascending=False).head(10)
-        
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.barplot(x='Importance', y='Feature', data=importances, ax=ax)
-        ax.set_title('Top 10 Most Important Features')
-        st.pyplot(fig)
 
 if __name__ == '__main__':
     main()
