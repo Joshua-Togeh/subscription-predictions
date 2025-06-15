@@ -45,7 +45,7 @@ EDA was conducted to understand the dataset’s structure and identify preproces
   - Chi-square tests indicated significant associations between `y` and categorical features like `job`, `marital`, `education`, `contact`, and `month`.
 - **Visualizations**:
   - Histograms showed age distributions by subscription outcome.
-  - Bar plots highlighted higher subscription rates for certain job types (e.g., "management", "retired") and months (e.g., "May", "September").
+  - Bar plots highlighted higher subscription rates for a job types.
 
 ### 2. Feature Engineering
 To enhance model performance, the following steps were taken:
