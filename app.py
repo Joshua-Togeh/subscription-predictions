@@ -7,8 +7,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
-from imblearn.over_sampling import SMOTE
-from sklearn.utils import check_X_y
 
 # Set page config
 st.set_page_config(page_title="Bank Marketing Predictor", layout="wide")
