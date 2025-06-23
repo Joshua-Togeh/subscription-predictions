@@ -111,7 +111,7 @@ def user_input_features(numerical_features, categorical_features):
 
 # Main function
 def main():
-    st.title("Bank term deposit Prediction")
+    st.title("Bank term deposit Predictor")
     
     # Preprocess data
     X, y, encoder, scaler, numerical_features, categorical_features = preprocess_data(df)
